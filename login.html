@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar sesión — TechStore</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/Cuenta.css">
+</head>
+<body>
+
+<header class="header">
+  <a href="index.html" class="logo">TechStore</a>
+  <nav>
+    <ul class="menu">
+      <li><a href="index.html">Inicio</a></li>
+      <li><a href="#">Servicios</a></li>
+      <li><a href="contacto.html">Contacto</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <div class="auth-container">
+
+    <a href="index.html" class="auth-logo">TechStore</a>
+    <h2>Bienvenido de nuevo</h2>
+    <p class="auth-subtitle">Inicia sesión para continuar</p>
+
+    <!-- Mensaje de error/éxito -->
+    <div class="mensaje" id="mensaje" style="display:none;"></div>
+
+    <form class="auth-form" id="loginForm">
+      <div class="field">
+        <label for="email">Correo electrónico</label>
+        <input type="email" id="email" name="email"
+               placeholder="tu@correo.com" required autocomplete="email">
+        <span class="field-error" id="err-email"></span>
+      </div>
+
+      <div class="field">
+        <label for="password">Contraseña</label>
+        <div class="input-wrap">
+          <input type="password" id="password" name="password"
+                 placeholder="••••••••" required autocomplete="current-password">
+          <button type="button" class="toggle-pw" onclick="togglePw('password', this)">
+            Ver
+          </button>
+        </div>
+        <span class="field-error" id="err-password"></span>
+      </div>
+
+      <button type="submit" class="btn-submit" id="btn-submit">
+        Iniciar sesión
+      </button>
+    </form>
+
+    <div class="divider"><span>o</span></div>
+
+    <button type="button" class="btn-google" id="btnGoogleLogin">
+      Continuar con Google
+    </button>
+
+    <p class="auth-link">
+      ¿No tienes cuenta? <a href="register.html">Crear cuenta gratis</a>
+    </p>
+
+  </div>
+</main>
+
+<footer>
+  <p>&copy; 2026 TechStore — Todos los derechos reservados</p>
+</footer>
+
+<script>
+  const GOOGLE_SIGNIN_URL = 'https://accounts.google.com/v3/signin/identifier?authuser=0&continue=https%3A%2F%2Fwww.google.com%2Fsearch%3Fq%3Dgoogle%26oq%3Dgoogle%26gs_lcrp%3DEgZjaHJvbWUyBggAEEUYOTIGCAEQRRg8MgYIAhBFGDwyBggDEEUYPDIGCAQQLhhA0gEJMTMyOTJqMGo3qAIAsAIA%26sourceid%3Dchrome%26ie%3DUTF-8&ec=futura_srp_og_si_72236_p&hl=es-419&flowName=GlifWebSignIn&flowEntry=AddSession&dsh=S-29846599%3A1777244349747408';
+
+  // Mostrar/ocultar contraseña
+  function togglePw(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (input.type === 'password') {
+      input.type = 'text';
+      btn.textContent = 'Ocultar';
+    } else {
+      input.type = 'password';
+      btn.textContent = 'Ver';
+    }
+  }
+
+  // Mostrar mensaje en pantalla
+  function mostrarMensaje(texto, tipo) {
+    const el = document.getElementById('mensaje');
+    el.textContent = texto;
+    el.className = 'mensaje ' + tipo; // 'error' o 'exito'
+    el.style.display = 'block';
+  }
+
+  function obtenerDestinoPostLogin() {
+    const params = new URLSearchParams(window.location.search);
+    const redirect = params.get('redirect');
+    return redirect ? decodeURIComponent(redirect) : 'index.html';
+  }
+
+  function iniciarSesionCuenta(cuenta) {
+    localStorage.setItem('usuario', cuenta.nombre);
+    localStorage.setItem('usuarioEmail', cuenta.email);
+    mostrarMensaje('¡Bienvenido! Redirigiendo...', 'exito');
+    setTimeout(() => { window.location.href = obtenerDestinoPostLogin(); }, 1200);
+  }
+
+  function loginConGoogle() {
+    localStorage.setItem('googleAuthPendiente', '1');
+    window.location.href = GOOGLE_SIGNIN_URL;
+  }
+
+  function completarLoginConGoogle() {
+    const email = prompt('Confirma tu correo de Google para entrar a TechStore:');
+    if (!email) return;
+    const emailLimpio = email.trim().toLowerCase();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(emailLimpio) || !emailLimpio.endsWith('@gmail.com')) {
+      mostrarMensaje('Debes ingresar un correo valido de Google (@gmail.com).', 'error');
+      return;
+    }
+
+    try {
+      const cuentas = JSON.parse(localStorage.getItem('cuentasTechStore') || '[]');
+      let cuenta = cuentas.find(item => item.email.toLowerCase() === emailLimpio);
+
+      if (!cuenta) {
+        const nombreGoogle = prompt('Primera vez con Google. Ingresa tu nombre para crear la cuenta:');
+        if (!nombreGoogle || nombreGoogle.trim().length < 2) {
+          mostrarMensaje('No se pudo crear la cuenta de Google.', 'error');
+          return;
+        }
+        cuenta = {
+          nombre: nombreGoogle.trim(),
+          email: emailLimpio,
+          password: null,
+          proveedor: 'google'
+        };
+        cuentas.push(cuenta);
+        localStorage.setItem('cuentasTechStore', JSON.stringify(cuentas));
+      }
+
+      localStorage.removeItem('googleAuthPendiente');
+      iniciarSesionCuenta(cuenta);
+    } catch (err) {
+      mostrarMensaje('No se pudo completar el ingreso con Google.', 'error');
+    }
+  }
+
+  function intentarCompletarGooglePendiente() {
+    if (localStorage.getItem('googleAuthPendiente') !== '1') return;
+    const params = new URLSearchParams(window.location.search);
+    // Si llegaste aqui porque intentaste comprar (redirect), no molestamos con Google.
+    if (params.has('redirect')) {
+      localStorage.removeItem('googleAuthPendiente');
+      return;
+    }
+    const confirmar = confirm('Si ya iniciaste sesion en Google, presiona Aceptar para completar el acceso en TechStore.');
+    if (!confirmar) return;
+    completarLoginConGoogle();
+  }
+
+  // Submit del formulario
+  document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const btn = document.getElementById('btn-submit');
+    btn.textContent = 'Entrando...';
+    btn.disabled = true;
+
+    const datos = {
+      email: document.getElementById('email').value.trim(),
+      password: document.getElementById('password').value
+    };
+
+    try {
+      const cuentas = JSON.parse(localStorage.getItem('cuentasTechStore') || '[]');
+      const cuenta = cuentas.find(
+        item => item.email.toLowerCase() === datos.email.toLowerCase() && item.password === datos.password
+      );
+
+      if (cuenta) {
+        iniciarSesionCuenta(cuenta);
+      } else {
+        mostrarMensaje('Correo o contrasena incorrectos.', 'error');
+        btn.textContent = 'Iniciar sesión';
+        btn.disabled = false;
+      }
+    } catch (err) {
+      mostrarMensaje('No se pudo conectar con el servidor.', 'error');
+      btn.textContent = 'Iniciar sesión';
+      btn.disabled = false;
+    }
+  });
+
+  document.getElementById('btnGoogleLogin').addEventListener('click', loginConGoogle);
+  intentarCompletarGooglePendiente();
+</script>
+
+</body>
+</html>

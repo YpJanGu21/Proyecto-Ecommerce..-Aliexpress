@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AirPods Black Edition — TechStore</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/producto.css">
+</head>
+<body>
+
+<header class="header">
+  <a href="index.html" class="logo">TechStore</a>
+  <nav>
+    <ul class="menu">
+      <li><a href="index.html">Inicio</a></li>
+      <li><a href="#">Servicios</a></li>
+      <li><a href="contacto.html">Contacto</a></li>
+    </ul>
+  </nav>
+</header>
+
+<div class="breadcrumb">
+  <a href="index.html">Inicio</a>
+  <span class="sep">/</span>
+  <a href="index.html">AirPods</a>
+  <span class="sep">/</span>
+  <span>AirPods Black Edition</span>
+</div>
+
+<div class="producto-wrapper">
+
+  <div class="galeria">
+
+    <div class="imagen-principal" id="stage">
+      <div class="badge-oferta">−38% OFERTA</div>
+      <img src="img/AirPodsBlack/Airpods Black.jpeg" alt="AirPods Black Edition" id="img-principal">
+      <div class="shadow-floor"></div>
+    </div>
+
+    <div class="galeria-fotos">
+
+      <div class="foto-item activa" onclick="cambiarFoto(this, 'img/AirPodsBlack/AIRPODS BLACK.webp')">
+        <img src="img/AirPodsBlack/Airpods Black.jpeg" alt="Vista frontal">
+      </div>
+
+     
+
+    </div>
+
+  </div>
+
+  <div class="producto-info">
+
+    <span class="marca-tag">Apple — Edición Especial</span>
+    <h1>AirPods 2 Pro<br>Black Edition</h1>
+
+    <div class="sin-resenas">
+      <span class="estrellas-vacias">☆☆☆☆☆</span>
+      <a href="#">Sé el primero en opinar</a>
+    </div>
+
+    <div class="bloque-precio">
+      <p class="label-oferta">Precio especial</p>
+      <p class="precio-actual">$19.900</p>
+      <div class="precio-fila">
+        <span class="precio-anterior">$31.900</span>
+        <span class="descuento-tag">−38%</span>
+        <span class="ahorro-badge">Ahorras $12.000</span>
+      </div>
+    </div>
+
+    <div class="info-envio">
+      <div class="info-fila">
+        <div class="icono">✅</div>
+        <div class="texto">
+          <strong class="texto-verde">Stock disponible</strong>
+          <span>Despacho inmediato</span>
+        </div>
+      </div>
+      <div class="info-fila">
+        <div class="icono">🚚</div>
+        <div class="texto">
+          <strong>Envío gratis a Santiago</strong>
+          <span>Llega entre 1–3 días hábiles</span>
+        </div>
+      </div>
+      <div class="info-fila">
+        <div class="icono">🔒</div>
+        <div class="texto">
+          <strong>Compra 100% segura</strong>
+          <span>Pago protegido · Devolución fácil</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="botones">
+      <button class="btn-comprar">Comprar ahora</button>
+      <button class="btn-agregar">+ Agregar al carrito</button>
+    </div>
+
+    <div class="specs">
+      <h3>Especificaciones</h3>
+      <div class="specs-grid">
+        <div class="spec-item">
+          <span class="spec-label">Modelo</span>
+          <span class="spec-valor">AirPods 2 Pro Black</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">Color</span>
+          <span class="spec-valor">Negro mate</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">Batería</span>
+          <span class="spec-valor">Hasta 6 horas</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">Con estuche</span>
+          <span class="spec-valor">Hasta 24 horas</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">Cancelación</span>
+          <span class="spec-valor">Activa (ANC)</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">Edición</span>
+          <span class="spec-valor">Limitada</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="descripcion-bloque">
+      <h3>Descripción</h3>
+      <p>Edición especial en negro mate exclusivo. Cancelación activa de ruido, audio espacial y hasta 6 horas de escucha continua. Perfectos para quienes buscan tecnología y estilo en uno.</p>
+    </div>
+
+    <a class="volver" href="index.html">← Volver al catálogo</a>
+
+  </div>
+</div>
+
+<footer>
+  <p>&copy; 2026 TechStore — Todos los derechos reservados</p>
+</footer>
+
+<script>
+  function cambiarFoto(el, src) {
+    const imgPrincipal = document.getElementById('img-principal');
+    imgPrincipal.style.opacity = '0';
+    setTimeout(() => {
+      imgPrincipal.src = src;
+      imgPrincipal.style.opacity = '1';
+      imgPrincipal.style.transform = 'rotateY(0deg) rotateX(0deg) scale(1)';
+    }, 150);
+    document.querySelectorAll('.foto-item').forEach(f => f.classList.remove('activa'));
+    el.classList.add('activa');
+  }
+
+  const stage = document.getElementById('stage');
+  const img   = document.getElementById('img-principal');
+
+  img.style.transition = 'transform 0.08s ease, filter 0.1s ease, opacity 0.15s ease';
+
+  stage.addEventListener('mousemove', e => {
+    const rect = stage.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width  - 0.5;
+    const y = (e.clientY - rect.top)  / rect.height - 0.5;
+    img.style.transform = `rotateY(${x * 20}deg) rotateX(${-y * 16}deg) scale(1.05)`;
+    img.style.filter    = `drop-shadow(${-x * 16}px ${y * 12 + 10}px 26px rgba(0,0,0,0.22))`;
+  });
+
+  stage.addEventListener('mouseleave', () => {
+    img.style.transform = 'rotateY(0deg) rotateX(0deg) scale(1)';
+    img.style.filter    = 'drop-shadow(0px 10px 24px rgba(0,0,0,0.14))';
+  });
+
+  function exigirSesionParaCompra(e) {
+    const usuario = localStorage.getItem('usuario');
+    if (usuario) return true;
+
+    e.preventDefault();
+    const paginaActual = window.location.pathname.split('/').pop() || 'index.html';
+    alert('Para comprar debes iniciar sesion o crear una cuenta.');
+    window.location.href = `login.html?redirect=${encodeURIComponent(paginaActual)}`;
+    return false;
+  }
+
+  function configurarCompraProtegida() {
+    document.querySelectorAll('.btn-comprar, .btn-agregar').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        const puedeComprar = exigirSesionParaCompra(e);
+        if (!puedeComprar) return;
+
+        if (this.classList.contains('btn-comprar')) {
+          const params = new URLSearchParams({
+            producto: 'AirPods Black Edition',
+            precio: '$19.900'
+          });
+          window.location.href = `checkout.html?${params.toString()}`;
+          return;
+        }
+
+        if (this.classList.contains('btn-agregar')) {
+          alert('Producto agregado al carrito.');
+        }
+      });
+    });
+  }
+
+  configurarCompraProtegida();
+</script>
+
+</body>
+</html>

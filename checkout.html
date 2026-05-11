@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout — TechStore</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/Cuenta.css">
+</head>
+<body>
+
+<header class="header">
+  <a href="index.html" class="logo">TechStore</a>
+  <nav>
+    <ul class="menu">
+      <li><a href="index.html">Inicio</a></li>
+      <li><a href="#">Servicios</a></li>
+      <li><a href="contacto.html">Contacto</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <div class="auth-container">
+    <a href="index.html" class="auth-logo">TechStore</a>
+    <h2>Finalizar compra</h2>
+    <p class="auth-subtitle">Completa tus datos de envio y pago</p>
+
+    <div class="mensaje" id="mensaje" style="display:none;"></div>
+
+    <form class="auth-form" id="checkoutForm">
+      <div class="field">
+        <label>Producto</label>
+        <input type="text" id="producto" readonly>
+      </div>
+
+      <div class="field">
+        <label>Total a pagar</label>
+        <input type="text" id="total" readonly>
+      </div>
+
+      <div class="field">
+        <label for="nombreCliente">Nombre</label>
+        <input type="text" id="nombreCliente" readonly>
+      </div>
+
+      <div class="field">
+        <label for="emailCliente">Correo</label>
+        <input type="email" id="emailCliente" readonly>
+      </div>
+
+      <div class="field">
+        <label for="direccion">Direccion de envio</label>
+        <input type="text" id="direccion" placeholder="Ej: Av. Siempre Viva 1234, Santiago" required>
+      </div>
+
+      <div class="field">
+        <label for="ciudad">Ciudad</label>
+        <input type="text" id="ciudad" placeholder="Ej: Santiago" required>
+      </div>
+
+      <div class="field">
+        <label for="celular">Numero celular</label>
+        <input type="tel" id="celular" placeholder="+56912345678" required>
+      </div>
+
+      <div class="field">
+        <label for="metodoPago">Metodo de pago</label>
+        <select id="metodoPago" required>
+          <option value="">Selecciona una opcion</option>
+          <option value="tarjeta">Tarjeta de debito/credito</option>
+          <option value="contraentrega">Pago contra entrega</option>
+        </select>
+      </div>
+
+      <div id="seccionTarjeta" style="display:none;">
+        <div class="field">
+          <label for="titularTarjeta">Titular de la tarjeta</label>
+          <input type="text" id="titularTarjeta" placeholder="Nombre como aparece en la tarjeta">
+        </div>
+
+        <div class="field">
+          <label for="numeroTarjeta">Numero de tarjeta</label>
+          <input type="text" id="numeroTarjeta" inputmode="numeric" placeholder="1234 5678 9012 3456" maxlength="19">
+        </div>
+
+        <div class="field">
+          <label for="vencimientoTarjeta">Vencimiento (MM/AA)</label>
+          <input type="text" id="vencimientoTarjeta" placeholder="08/29" maxlength="5">
+        </div>
+
+        <div class="field">
+          <label for="cvvTarjeta">CVV</label>
+          <input type="password" id="cvvTarjeta" inputmode="numeric" placeholder="123" maxlength="4">
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit">Confirmar compra</button>
+    </form>
+
+    <p class="auth-link" style="margin-top:16px;">
+      <a href="index.html">← Seguir comprando</a>
+    </p>
+  </div>
+</main>
+
+<footer>
+  <p>&copy; 2026 TechStore — Todos los derechos reservados</p>
+</footer>
+
+<script>
+  const CUENTA_COBRO_DESTINO = 'PENDIENTE: INGRESAR TU CUENTA DE COBRO';
+
+  function mostrarMensaje(texto, tipo) {
+    const el = document.getElementById('mensaje');
+    el.textContent = texto;
+    el.className = 'mensaje ' + tipo;
+    el.style.display = 'block';
+  }
+
+  function obtenerPerfilActivo() {
+    const nombre = localStorage.getItem('usuario');
+    const email = localStorage.getItem('usuarioEmail');
+    return { nombre, email };
+  }
+
+  function cargarResumenPedido() {
+    const perfil = obtenerPerfilActivo();
+    if (!perfil.nombre) {
+      const destino = encodeURIComponent(window.location.pathname.split('/').pop() + window.location.search);
+      window.location.href = `login.html?redirect=${destino}`;
+      return false;
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const producto = params.get('producto') || 'Producto seleccionado';
+    const precio = params.get('precio') || '$0';
+
+    document.getElementById('producto').value = producto;
+    document.getElementById('total').value = precio;
+    document.getElementById('nombreCliente').value = perfil.nombre;
+    document.getElementById('emailCliente').value = perfil.email || 'No disponible';
+    return true;
+  }
+
+  function guardarPedido(datos) {
+    const pedidos = JSON.parse(localStorage.getItem('pedidosTechStore') || '[]');
+    pedidos.push(datos);
+    localStorage.setItem('pedidosTechStore', JSON.stringify(pedidos));
+  }
+
+  function actualizarSeccionTarjeta() {
+    const metodoPago = document.getElementById('metodoPago').value;
+    const seccionTarjeta = document.getElementById('seccionTarjeta');
+    const esTarjeta = metodoPago === 'tarjeta';
+
+    seccionTarjeta.style.display = esTarjeta ? 'block' : 'none';
+    document.getElementById('titularTarjeta').required = esTarjeta;
+    document.getElementById('numeroTarjeta').required = esTarjeta;
+    document.getElementById('vencimientoTarjeta').required = esTarjeta;
+    document.getElementById('cvvTarjeta').required = esTarjeta;
+  }
+
+  function validarCamposTarjeta() {
+    const titular = document.getElementById('titularTarjeta').value.trim();
+    const numero = document.getElementById('numeroTarjeta').value.replace(/\s+/g, '');
+    const vencimiento = document.getElementById('vencimientoTarjeta').value.trim();
+    const cvv = document.getElementById('cvvTarjeta').value.trim();
+
+    if (titular.length < 3) {
+      mostrarMensaje('Ingresa el nombre del titular de la tarjeta.', 'error');
+      return false;
+    }
+    if (!/^\d{16}$/.test(numero)) {
+      mostrarMensaje('El numero de tarjeta debe tener 16 digitos.', 'error');
+      return false;
+    }
+    if (!/^\d{2}\/\d{2}$/.test(vencimiento)) {
+      mostrarMensaje('El vencimiento debe tener formato MM/AA.', 'error');
+      return false;
+    }
+    if (!/^\d{3,4}$/.test(cvv)) {
+      mostrarMensaje('El CVV debe tener 3 o 4 digitos.', 'error');
+      return false;
+    }
+    return true;
+  }
+
+  if (cargarResumenPedido()) {
+    document.getElementById('metodoPago').addEventListener('change', actualizarSeccionTarjeta);
+    actualizarSeccionTarjeta();
+
+    document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      document.getElementById('mensaje').style.display = 'none';
+
+      const metodoPagoSeleccionado = document.getElementById('metodoPago').value;
+      if (metodoPagoSeleccionado === 'tarjeta' && !validarCamposTarjeta()) {
+        return;
+      }
+
+      const pedido = {
+        producto: document.getElementById('producto').value,
+        total: document.getElementById('total').value,
+        nombre: document.getElementById('nombreCliente').value,
+        email: document.getElementById('emailCliente').value,
+        direccion: document.getElementById('direccion').value.trim(),
+        ciudad: document.getElementById('ciudad').value.trim(),
+        celular: document.getElementById('celular').value.trim(),
+        metodoPago: metodoPagoSeleccionado,
+        datosTarjeta: metodoPagoSeleccionado === 'tarjeta' ? {
+          titular: document.getElementById('titularTarjeta').value.trim(),
+          numeroOculto: '**** **** **** ' + document.getElementById('numeroTarjeta').value.replace(/\s+/g, '').slice(-4),
+          vencimiento: document.getElementById('vencimientoTarjeta').value.trim()
+        } : null,
+        cuentaCobroDestino: CUENTA_COBRO_DESTINO,
+        fecha: new Date().toISOString()
+      };
+
+      guardarPedido(pedido);
+      mostrarMensaje('Compra confirmada. El cobro se dirigira a la cuenta configurada de tu tienda.', 'exito');
+      setTimeout(() => { window.location.href = 'index.html'; }, 1800);
+    });
+  }
+</script>
+
+</body>
+</html>

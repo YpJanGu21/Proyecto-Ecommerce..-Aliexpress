@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechStore — Apple a tu alcance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">TechStore</div>
+  <nav>
+    <ul class="menu">
+      <li><a href="#">Inicio</a></li>
+      <li><a href="#">Servicios</a></li>
+      <li><a href="contacto.html">Contacto</a></li>
+    </ul>
+    <div class="auth-buttons">
+      <a href="login.html" class="btn-auth-header outline">Iniciar sesión</a>
+      <a href="register.html" class="btn-auth-header solid">Crear cuenta</a>
+    </div>
+    <div class="user-profile" id="user-profile" style="display:none;">
+      <div class="avatar" id="user-avatar">U</div>
+      <div class="user-meta">
+        <span class="user-label">Mi perfil</span>
+        <strong id="user-name">Usuario</strong>
+      </div>
+      <button type="button" class="btn-logout" id="btn-logout">Cerrar sesión</button>
+    </div>
+  </nav>
+</header>
+
+<main>
+
+  <section class="hero">
+    <h1>Apple ahora<br>a tu alcance</h1>
+    <p>Productos originales al mejor precio de Chile</p>
+    <a href="#productos"><button class="btn">Ver productos</button></a>
+  </section>
+
+  <section class="productos" id="productos">
+    <h2>Destacados</h2>
+    <p class="subtitulo">Selección Apple con descuento exclusivo</p>
+
+    <div class="cards-grid">
+
+      <div class="card">
+        <div class="card-badge">−32%</div>
+        <div class="card-img-wrap" data-3d>
+          <img src="img/AirPods3/Airpods3_HOME.avif" alt="AirPods 3">
+        </div>
+        <div class="card-body">
+          <h3>AirPods 3</h3>
+          <div class="precio-wrap-card">
+            <span class="precio-card">$32.500</span>
+            <span class="precio-ant-card">$47.990</span>
+          </div>
+          <a href="airpods.html" class="btn-card">Comprar</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-badge">−22%</div>
+        <div class="card-img-wrap" data-3d>
+          <img src="img/AppleWatchS10/Apple watch.jpg" alt="Apple Watch Series 10">
+        </div>
+        <div class="card-body">
+          <h3>Apple Watch Series 10</h3>
+          <div class="precio-wrap-card">
+            <span class="precio-card">$69.970</span>
+            <span class="precio-ant-card">$89.990</span>
+          </div>
+          <a href="AppleWatch.html" class="btn-card">Comprar</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-badge">−38%</div>
+        <div class="card-img-wrap" data-3d>
+          <img src="img/AirPodsBlack/AirpodsBlacHome.png" alt="AirPods Black">
+        </div>
+        <div class="card-body">
+          <h3>AirPods Black</h3>
+          <div class="precio-wrap-card">
+            <span class="precio-card">$19.900</span>
+            <span class="precio-ant-card">$31.900</span>
+          </div>
+          <a href="AirpodsBlack.html" class="btn-card">Comprar</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-badge">−38%</div>
+        <div class="card-img-wrap" data-3d>
+          <img src="img/AirPods2Pro/Airpods2Home.webp" alt="AirPods 2 Pro">
+        </div>
+        <div class="card-body">
+          <h3>AirPods 2 pro</h3>
+          <div class="precio-wrap-card">
+            <span class="precio-card">$35.500</span>
+            <span class="precio-ant-card">$51.900</span>
+          </div>
+          <a href="Airpods2Pro.html" class="btn-card">Comprar</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>&copy; 2026 TechStore — Todos los derechos reservados</p>
+</footer>
+
+<script>
+  function mostrarSesionActiva() {
+    const usuario = localStorage.getItem('usuario');
+    const authButtons = document.querySelector('.auth-buttons');
+    const userProfile = document.getElementById('user-profile');
+    const userName = document.getElementById('user-name');
+    const userAvatar = document.getElementById('user-avatar');
+
+    if (!usuario) {
+      authButtons.style.display = 'flex';
+      userProfile.style.display = 'none';
+      return;
+    }
+
+    userName.textContent = usuario;
+    userAvatar.textContent = usuario.charAt(0).toUpperCase();
+    authButtons.style.display = 'none';
+    userProfile.style.display = 'flex';
+  }
+
+  document.getElementById('btn-logout').addEventListener('click', () => {
+    localStorage.removeItem('usuario');
+    mostrarSesionActiva();
+  });
+
+  mostrarSesionActiva();
+
+
+  document.querySelectorAll('[data-3d]').forEach(wrap => {
+    const img = wrap.querySelector('img');
+    wrap.addEventListener('mousemove', e => {
+      const r = wrap.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width  - 0.5;
+      const y = (e.clientY - r.top)  / r.height - 0.5;
+      img.style.transform = `rotateY(${x * 20}deg) rotateX(${-y * 16}deg) scale(1.06)`;
+      img.style.filter    = `drop-shadow(${-x * 14}px ${y * 10}px 22px rgba(0,0,0,0.22))`;
+    });
+    wrap.addEventListener('mouseleave', () => {
+      img.style.transform = 'rotateY(0) rotateX(0) scale(1)';
+      img.style.filter    = 'drop-shadow(0 6px 16px rgba(0,0,0,0.12))';
+    });
+  });
+</script>
+
+</body>
+</html>
